@@ -4,9 +4,10 @@ A TYPO3 backend extension that turns an error into a **prefilled bug report on t
 package's own upstream GitHub tracker** — plus a proactive "Report an issue" item in the backend
 toolbar that captures the current context.
 
-> Status: **beta / MVP.** The attribution engine is unit-tested and the TYPO3 integration is built
-> against verified v13.4/v14 APIs, but the backend UI has **not yet been exercised in a booted TYPO3
-> instance** (no runtime/E2E verification yet — see [Verification](#verification)).
+> Status: **beta / MVP.** The attribution engine is unit-tested and both backend features have been
+> verified live in booted TYPO3 **14.3.2 (PHP 8.5)** and **13.4.30 (PHP 8.3)** DDEV instances
+> (see [Verification](#verification)). Not yet hardened for TER release (no functional/E2E test suite,
+> static analysis, or RST docs yet).
 
 ## What it does
 
@@ -121,7 +122,7 @@ bin/, fixtures/  CLI dev/regression harness (local; needs a sibling TYPO3 core c
 
 ## Verification
 
-Verified **live in a real TYPO3 13.4.30 instance** (DDEV, PHP 8.3, Development context):
+Verified **live in booted DDEV instances — TYPO3 14.3.2 / PHP 8.5 (primary) and 13.4.30 / PHP 8.3**, Development context:
 
 - ✅ Installs via Composer and **activates cleanly**; the DI container compiles (Services.yaml,
   toolbar autoconfigure, PSR-14 listener, PSR-15 middleware, exception-handler opt-out).
@@ -132,7 +133,8 @@ Verified **live in a real TYPO3 13.4.30 instance** (DDEV, PHP 8.3, Development c
   gated (a core-only error shows "no one-click report", not a wrong report).
 - ✅ Unit tests pass for the safety-critical pure classes (attribution, `ReportPolicy` gating,
   `GitHubTrackerResolver` 4-tier chain); CI workflow runs validate + lint + PHPUnit on PHP 8.2–8.5.
-- ✅ Every referenced TYPO3 FQCN/signature was verified against v13.4/v14 core source.
+- ✅ Every referenced TYPO3 FQCN/signature was verified against TYPO3 13.4/14.3 core source; the
+  toolbar renders on both v13 (Bootstrap dropdown) and v14 (native popover API).
 
 **Found and fixed during the live install:** the exception handler **must** be registered in
 `config/system/additional.php` — `ext_localconf.php` runs *after* TYPO3 reads the handler class, so a
