@@ -48,7 +48,7 @@ composer require netresearch/nr-bug-reporter
       = \Netresearch\NrBugReporter\Error\ReportingExceptionHandler::class;
   ```
 
-Targets **TYPO3 13.4 + 14**, **PHP 8.2–8.5**, Composer-mode installs.
+Targets **TYPO3 13.4 LTS + 14.3 LTS**, **PHP 8.2–8.5**, Composer-mode installs.
 
 ## How attribution works
 
@@ -116,7 +116,7 @@ Configuration/   Services.yaml, JavaScriptModules.php, RequestMiddlewares.php, I
 Resources/       Public/JavaScript/report-toolbar.js, Public/Icons/Extension.svg
 Tests/Unit/      attribution + ReportPolicy + GitHubTrackerResolver tests (portable, no TYPO3 boot)
 bin/, fixtures/  CLI dev/regression harness (local; needs a sibling TYPO3 core checkout)
-.github/         CI: composer validate + lint + PHPUnit on PHP 8.2-8.4
+.github/         CI: composer validate + lint + PHPUnit on PHP 8.2-8.5
 ```
 
 ## Verification
@@ -131,7 +131,7 @@ Verified **live in a real TYPO3 13.4.30 instance** (DDEV, PHP 8.3, Development c
 - ✅ The **error-page banner is injected** into the debug exception page through the handler, correctly
   gated (a core-only error shows "no one-click report", not a wrong report).
 - ✅ Unit tests pass for the safety-critical pure classes (attribution, `ReportPolicy` gating,
-  `GitHubTrackerResolver` 4-tier chain); CI workflow runs validate + lint + PHPUnit on PHP 8.2–8.4.
+  `GitHubTrackerResolver` 4-tier chain); CI workflow runs validate + lint + PHPUnit on PHP 8.2–8.5.
 - ✅ Every referenced TYPO3 FQCN/signature was verified against v13.4/v14 core source.
 
 **Found and fixed during the live install:** the exception handler **must** be registered in
