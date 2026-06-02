@@ -1,0 +1,18 @@
+{
+    "name": "netresearch/nr-bug-reporter",
+    "description": "Spike: attribute a TYPO3 exception to its originating Composer package and resolve the upstream GitHub issue tracker.",
+    "type": "typo3-cms-extension",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.2"
+    },
+    "support": {
+        "issues": "https://github.com/netresearch/t3x-nr-bug-reporter/issues",
+        "source": "https://github.com/netresearch/t3x-nr-bug-reporter"
+    },
+    "autoload": {
+        "psr-4": {
+            "Netresearch\\NrBugReporter\\": "src/"
+        }
+    }
+}
