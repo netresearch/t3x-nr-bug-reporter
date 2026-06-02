@@ -31,14 +31,19 @@ upstream GitHub tracker, and gate whether a one-click report is actually appropr
 composer require netresearch/nr-bug-reporter
 ```
 
-- **Development context** auto-enables the error-page report banner (`ext_localconf.php` sets the
-  `debugExceptionHandler` only when `Environment::getContext()->isDevelopment()`).
-- **Proactive toolbar** appears for any authenticated backend user immediately (registered via DI).
+- **Proactive toolbar** appears for any authenticated backend user immediately (registered via DI) —
+  no configuration needed.
 - **Configure a target repo** (optional) for the proactive report under *Settings → Extension
   Configuration → nr_bug_reporter → `defaultReportRepository`* (a GitHub repo URL). Without it the
   toolbar offers copy-to-clipboard.
-- **Production capture** (optional, opt-in) — set in `config/system/additional.php`:
+- **Error-page "Report this bug" feature — opt-in via `config/system/additional.php`.** It cannot be
+  enabled from the extension: TYPO3 reads the exception-handler class during early bootstrap, *before*
+  `ext_localconf.php` runs. Add ONE of:
   ```php
+  // Development error page:
+  $GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler']
+      = \Netresearch\NrBugReporter\Error\ReportingExceptionHandler::class;
+  // Production capture (changes production error rendering — opt in deliberately):
   $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler']
       = \Netresearch\NrBugReporter\Error\ReportingExceptionHandler::class;
   ```
@@ -109,20 +114,29 @@ Classes/
   EventListener/ BackendAssetLoader                                            (loads the toolbar JS)
 Configuration/   Services.yaml, JavaScriptModules.php, RequestMiddlewares.php, Icons.php
 Resources/       Public/JavaScript/report-toolbar.js, Public/Icons/Extension.svg
-Tests/Unit/      PackageAttributionServiceTest (portable)
+Tests/Unit/      attribution + ReportPolicy + GitHubTrackerResolver tests (portable, no TYPO3 boot)
 bin/, fixtures/  CLI dev/regression harness (local; needs a sibling TYPO3 core checkout)
+.github/         CI: composer validate + lint + PHPUnit on PHP 8.2-8.4
 ```
 
 ## Verification
 
-- ✅ All PHP lints clean; the attribution engine's hardening fixes pass a self-contained smoke run and
-  the PHPUnit unit tests.
-- ✅ Every referenced TYPO3 FQCN and key signature (`ToolbarItemInterface`, `RequestAwareToolbarItem`,
-  `AfterBackendPageRenderEvent`, `DebugExceptionHandler::getContent`, `IconSize`, `ExtensionConfiguration`,
-  the backend middleware stack, AJAX/route APIs) was verified against the real v13.4/v14 core source.
-- ⛔ **Not yet done:** install into a running TYPO3 13.4/14 instance and click through both flows
-  (toolbar render, dropdown, error-page banner, prefilled URL in a browser). This requires a booted
-  instance with a database and is the first follow-up before calling it production-ready.
+Verified **live in a real TYPO3 13.4.30 instance** (DDEV, PHP 8.3, Development context):
+
+- ✅ Installs via Composer and **activates cleanly**; the DI container compiles (Services.yaml,
+  toolbar autoconfigure, PSR-14 listener, PSR-15 middleware, exception-handler opt-out).
+- ✅ Backend loads; the **proactive toolbar item renders** with its icon, and the dropdown shows the
+  live context (module, URL), the **recent-actions trail** (the middleware → session works), and the
+  copy-report / GitHub-link action — **no console errors**.
+- ✅ The **error-page banner is injected** into the debug exception page through the handler, correctly
+  gated (a core-only error shows "no one-click report", not a wrong report).
+- ✅ Unit tests pass for the safety-critical pure classes (attribution, `ReportPolicy` gating,
+  `GitHubTrackerResolver` 4-tier chain); CI workflow runs validate + lint + PHPUnit on PHP 8.2–8.4.
+- ✅ Every referenced TYPO3 FQCN/signature was verified against v13.4/v14 core source.
+
+**Found and fixed during the live install:** the exception handler **must** be registered in
+`config/system/additional.php` — `ext_localconf.php` runs *after* TYPO3 reads the handler class, so a
+registration there is silently ignored. (The proactive toolbar is unaffected — it uses DI.)
 
 ## Known limitations
 

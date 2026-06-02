@@ -24,7 +24,9 @@ final class IssueUrlComposer
 
     public function composeForError(string $issuesNewUrl, CapturedError $error, ?BackendContext $context): string
     {
-        $title = $error->exceptionClass . ': ' . $error->message;
+        // The title must be redacted too: it is encoded into the prefilled URL just like the body,
+        // so a raw exception message here would leak secrets/paths into the GitHub issue title.
+        $title = $this->capTitle($error->exceptionClass . ': ' . $this->redact($error->message));
         $body = "### Error\n\n```\n"
             . $error->exceptionClass . ': ' . $this->redact($error->message) . "\n"
             . $this->redact($error->file) . ':' . $error->line . "\n```\n\n"
@@ -150,11 +152,22 @@ final class IssueUrlComposer
             $value,
         );
 
+        // Bearer tokens and JWT-like blobs that do not use a key=value form.
+        $value = (string) preg_replace('~(?i)\bBearer\s+[A-Za-z0-9._\-]+~', 'Bearer [redacted]', $value);
+        $value = (string) preg_replace('~\beyJ[A-Za-z0-9._\-]{16,}~', '[redacted-jwt]', $value);
+
         $projectPath = Environment::getProjectPath();
         if ($projectPath !== '') {
             $value = str_replace($projectPath . '/', '', $value);
         }
 
         return $value;
+    }
+
+    private function capTitle(string $title): string
+    {
+        $title = trim((string) preg_replace('~\s+~', ' ', $title));
+
+        return mb_strlen($title) > 160 ? mb_substr($title, 0, 157) . '…' : $title;
     }
 }

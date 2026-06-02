@@ -1,0 +1,7 @@
+{
+    "name": "acme/gitlab",
+    "type": "typo3-cms-extension",
+    "support": {
+        "issues": "https://gitlab.example.com/acme/gl/-/issues"
+    }
+}
