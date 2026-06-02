@@ -1,10 +1,16 @@
 {
     "name": "netresearch/nr-bug-reporter",
-    "description": "Spike: attribute a TYPO3 exception to its originating Composer package and resolve the upstream GitHub issue tracker.",
     "type": "typo3-cms-extension",
+    "description": "TYPO3 backend bug reporter: attribute an error to its originating Composer package and open a prefilled issue on that package's upstream GitHub tracker. Adds an error-page report action and a proactive backend toolbar item.",
     "license": "GPL-2.0-or-later",
+    "keywords": ["typo3", "backend", "bug-report", "error-handling", "github"],
     "require": {
-        "php": ">=8.2"
+        "php": "^8.2",
+        "typo3/cms-core": "^13.4 || ^14.0",
+        "typo3/cms-backend": "^13.4 || ^14.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5 || ^11.0"
     },
     "support": {
         "issues": "https://github.com/netresearch/t3x-nr-bug-reporter/issues",
@@ -12,7 +18,17 @@
     },
     "autoload": {
         "psr-4": {
-            "Netresearch\\NrBugReporter\\": "src/"
+            "Netresearch\\NrBugReporter\\": "Classes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Netresearch\\NrBugReporter\\Tests\\": "Tests/"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "nr_bug_reporter"
         }
     }
 }

@@ -16,7 +16,7 @@ spl_autoload_register(static function (string $class): void {
         return;
     }
     $relative = str_replace('\\', '/', substr($class, strlen($prefix)));
-    $file = __DIR__ . '/../src/' . $relative . '.php';
+    $file = __DIR__ . '/../Classes/' . $relative . '.php';
     if (is_file($file)) {
         require $file;
     }
