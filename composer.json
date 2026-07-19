@@ -12,6 +12,12 @@
     "require-dev": {
         "phpunit/phpunit": "^10.5 || ^11.0"
     },
+    "config": {
+        "allow-plugins": {
+            "typo3/cms-composer-installers": true,
+            "typo3/class-alias-loader": true
+        }
+    },
     "support": {
         "issues": "https://github.com/netresearch/t3x-nr-bug-reporter/issues",
         "source": "https://github.com/netresearch/t3x-nr-bug-reporter"
