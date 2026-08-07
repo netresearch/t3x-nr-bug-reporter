@@ -1,0 +1,14 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Netresearch\NrBugReporter\:
+    resource: '../Classes/*'
+
+  # The exception handler is instantiated by core via GeneralUtility::makeInstance() (no DI),
+  # so it must not be wired as a container service.
+  Netresearch\NrBugReporter\Error\ReportingExceptionHandler:
+    autowire: false
+    autoconfigure: false

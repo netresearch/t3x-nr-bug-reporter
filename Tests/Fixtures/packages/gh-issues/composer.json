@@ -1,0 +1,7 @@
+{
+    "name": "acme/gh-issues",
+    "type": "typo3-cms-extension",
+    "support": {
+        "issues": "https://github.com/acme/gh-issues/issues"
+    }
+}

@@ -94,6 +94,12 @@ final class GitHubTrackerResolver
         return preg_match('~^https?://github\.com/[^/\s]+/[^/\s]+/issues/?$~', $url) === 1;
     }
 
+    /** Public helper: derive a prefillable issues/new URL from any GitHub repo/clone URL, or null. */
+    public function issuesNewUrl(string $repoUrl): ?string
+    {
+        return $this->deriveIssuesNew($repoUrl);
+    }
+
     private function deriveIssuesNew(string $url): ?string
     {
         // Handles both https://github.com/owner/repo(.git) and SSH git@github.com:owner/repo(.git).

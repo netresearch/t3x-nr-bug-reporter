@@ -36,9 +36,6 @@ final class PackageAttributionService
     ) {}
 
     /**
-     * @param list<string|null> $files innermost -> outermost; $files[0] = throw site (getFile())
-     */
-    /**
      * @param list<string|array{file?:?string, class?:?string}|null> $frames innermost->outermost;
      *        $frames[0] = throw site. A frame may be a bare file path (back-compat) or {file, class}.
      * @param list<string|array{file?:?string, class?:?string}>|null $rootCauseFrames when the exception
@@ -52,15 +49,12 @@ final class PackageAttributionService
             $frames = $rootCauseFrames;
         }
 
-        $candidates = [];
-        $infra = [];
-        $coreSeen = false;
-        $unknownSeen = false;
-
+        // First pass: resolve every frame to its owning package + classification + dispatcher flag.
+        $resolved = [];
         foreach ($frames as $frame) {
             [$file, $fqcn] = $this->normaliseFrame($frame);
             if ($file === null && $fqcn === null) {
-                $unknownSeen = true;
+                $resolved[] = ['class' => 'unknown', 'isDispatcher' => false];
                 continue;
             }
 
@@ -71,15 +65,24 @@ final class PackageAttributionService
                 $package = $this->index->resolve($file);
             }
 
-            $classification = $this->classify($file ?? '', $package);
-            $row = [
+            $resolved[] = [
                 'package' => $package['name'] ?? null,
                 'type' => $package['type'] ?? null,
                 'file' => $file ?? ($fqcn ?? ''),
-                'class' => $classification,
+                'class' => $this->classify($file ?? '', $package),
+                'isDispatcher' => $this->isDispatcher($file, $fqcn),
             ];
+        }
 
-            switch ($classification) {
+        // Second pass: collect candidates, flagging those reached *through* a PSR-14/PSR-15 dispatcher
+        // (the frame immediately outward is a dispatcher) — such a frame is a passive listener/middleware
+        // that likely received bad input from an emitter further upstream.
+        $candidates = [];
+        $infra = [];
+        $coreSeen = false;
+        $unknownSeen = false;
+        foreach ($resolved as $i => $row) {
+            switch ($row['class']) {
                 case 'self':
                     break;
                 case 'core':
@@ -90,6 +93,7 @@ final class PackageAttributionService
                     break;
                 case 'extension':
                 case 'library':
+                    $row['dispatched'] = ($resolved[$i + 1]['isDispatcher'] ?? false);
                     $candidates[] = $row;
                     break;
                 default:
@@ -98,13 +102,27 @@ final class PackageAttributionService
         }
 
         if ($candidates !== []) {
+            // Prefer the first candidate NOT reached through a dispatcher.
+            foreach ($candidates as $candidate) {
+                if (!($candidate['dispatched'] ?? false)) {
+                    return new AttributionResult(
+                        $candidate['package'],
+                        $candidate['class'] === 'extension' ? 'high' : 'medium',
+                        $candidates,
+                        sprintf('innermost %s frame (%s)', $candidate['class'], (string) $candidate['package']),
+                    );
+                }
+            }
+
+            // All candidates are dispatched (event listeners / middleware): the real culprit is likely
+            // the emitter upstream. Report low confidence so the gate withholds a one-click report.
             $winner = $candidates[0];
 
             return new AttributionResult(
                 $winner['package'],
-                $winner['class'] === 'extension' ? 'high' : 'medium',
+                'low',
                 $candidates,
-                sprintf('innermost %s frame (%s)', $winner['class'], (string) $winner['package']),
+                sprintf('%s frame reached via a dispatcher (passive consumer); emitter likely upstream', $winner['class']),
             );
         }
 
@@ -184,6 +202,14 @@ final class PackageAttributionService
         }
 
         return false;
+    }
+
+    /** A PSR-14 event dispatcher or PSR-15 middleware dispatcher frame (by class FQCN or file). */
+    private function isDispatcher(?string $file, ?string $fqcn): bool
+    {
+        $haystack = ($fqcn ?? '') . '|' . ($file ?? '');
+
+        return preg_match('~(EventDispatcher|MiddlewareDispatcher|ListenerProvider)~', $haystack) === 1;
     }
 
     /**

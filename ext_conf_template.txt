@@ -1,0 +1,2 @@
+# cat=basic; type=string; label=Default report repository: GitHub repository (URL or git@github.com:owner/repo.git) the proactive toolbar "Report a problem" action files against. Leave empty to offer copy-to-clipboard instead.
+defaultReportRepository =

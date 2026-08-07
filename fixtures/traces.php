@@ -39,7 +39,7 @@ $tdbViewHelper  = $tdb . '/Classes/ViewHelpers/TranslateViewHelper.php';
 $llmService     = $llm . '/Classes/Specialized/AbstractSpecializedService.php';
 $imgProvider    = $img . '/Classes/Seo/ImagesXmlSitemapDataProvider.php';
 $nrcLocalconf   = $nrc . '/ext_localconf.php';
-$selfService    = $self . '/src/Attribution/PackageAttributionService.php';
+$selfService    = $self . '/Classes/Attribution/PackageAttributionService.php';
 
 // Synthetic: a compiled Fluid template under var/cache (has no owning source package).
 $compiledFluid = $core . '/var/cache/code/fluid_template/Layout_action_abc123.php';

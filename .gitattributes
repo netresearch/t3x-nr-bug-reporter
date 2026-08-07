@@ -1,0 +1,10 @@
+# Keep dev-only artifacts out of the distributed package (composer archive / TER / dist tarball).
+/.github/           export-ignore
+/Build/             export-ignore
+/Tests/             export-ignore
+/bin/               export-ignore
+/fixtures/          export-ignore
+/.gitattributes     export-ignore
+/.gitignore         export-ignore
+/phpunit.xml.dist   export-ignore
+/README.md          export-ignore
