@@ -23,3 +23,8 @@ jobs:
       run-rector: false
       # No ci:test:php:unit composer script; phpunit.xml.dist lives at repo root.
       unit-test-command: 'vendor/bin/phpunit'
+      # This extension has no functional tests. Without this the shared
+      # workflow runs its functional job, finds no test script, and reports
+      # success — coverage that does not exist. See
+      # netresearch/typo3-ci-workflows#188.
+      run-functional-tests: false
