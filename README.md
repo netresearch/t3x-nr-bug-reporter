@@ -1,3 +1,5 @@
+<!-- SPDX-License-Identifier: GPL-2.0-or-later -->
+<!-- SPDX-FileCopyrightText: Netresearch DTT GmbH -->
 # EXT:nr_bug_reporter
 
 A TYPO3 backend extension that turns an error into a **prefilled bug report on the originating

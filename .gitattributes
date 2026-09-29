@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: Netresearch DTT GmbH
 # Keep dev-only artifacts out of the distributed package (composer archive / TER / dist tarball).
 /.github/           export-ignore
 /Build/             export-ignore
