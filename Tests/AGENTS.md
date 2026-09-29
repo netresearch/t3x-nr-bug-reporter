@@ -14,6 +14,7 @@ Portable PHPUnit unit tests for the safety-critical pure classes (attribution he
 | `Unit/Attribution/PackageAttributionServiceTest.php` | Frame-walking heuristic: class-first resolution, infra skip, dispatcher demotion |
 | `Unit/Decision/ReportPolicyTest.php` | Gating rules: confidence thresholds, short traces, config/author errors |
 | `Unit/Resolver/GitHubTrackerResolverTest.php` | 4-tier tracker chain against the fixture packages |
+| `Unit/Report/IssueUrlComposerTest.php` | Redaction of the prefilled issue body and the copy-to-clipboard report |
 | `Fixtures/packages/*/composer.json` | Minimal package manifests (gh-issues, gh-homepage, gitlab) for resolver tests |
 <!-- AGENTS-GENERATED:END filemap -->
 
@@ -31,6 +32,7 @@ Tests/
 ├── Unit/
 │   ├── Attribution/   # PackageAttributionServiceTest
 │   ├── Decision/      # ReportPolicyTest
+│   ├── Report/        # IssueUrlComposerTest
 │   └── Resolver/      # GitHubTrackerResolverTest
 └── Fixtures/
     └── packages/      # composer.json fixtures per tracker-resolution tier
@@ -51,7 +53,7 @@ CI runs exactly `vendor/bin/phpunit` on PHP 8.2–8.5 × TYPO3 ^13.4/^14.3 (see 
 
 <!-- AGENTS-GENERATED:START patterns -->
 ## Patterns to Follow
-- Extend `PHPUnit\Framework\TestCase` directly; keep tests free of TYPO3 imports so they stay portable
+- Extend `PHPUnit\Framework\TestCase` directly; keep tests free of TYPO3 imports so they stay portable. Exception: `IssueUrlComposerTest` uses `Environment` and `Typo3Version` from typo3/cms-core, which need no TYPO3 boot, only `Environment::initialize()` in `setUp()`
 - One focused test method per trace/package scenario with an explanatory assertion message (current style — no data providers in use)
 - Resolver tests read manifests from `Tests/Fixtures/packages/` — add a new fixture package per new resolution tier or edge case
 - Attribution scenarios that need a *real* package index belong in the `../bin/` harness, not here

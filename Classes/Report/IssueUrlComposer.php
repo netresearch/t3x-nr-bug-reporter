@@ -62,7 +62,7 @@ final class IssueUrlComposer
     {
         $lines = ['Backend issue report', ''];
         $lines[] = 'Module: ' . ($context->module ?? '-');
-        $lines[] = 'URL: ' . ($context->url ?? '-');
+        $lines[] = 'URL: ' . $this->redact((string) ($context->url ?? '-'));
         if ($context->params !== []) {
             $lines[] = 'Params: ' . $this->flattenParams($context->params);
         }
