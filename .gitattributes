@@ -6,7 +6,14 @@
 /Tests/             export-ignore
 /bin/               export-ignore
 /fixtures/          export-ignore
+/docs/              export-ignore
+/scripts/           export-ignore
+/.bestpractices.json export-ignore
 /.gitattributes     export-ignore
 /.gitignore         export-ignore
 /phpunit.xml.dist   export-ignore
 /README.md          export-ignore
+/renovate.json      export-ignore
+# Agent instructions, at every level of the tree.
+AGENTS.md           export-ignore
+CLAUDE.md           export-ignore
