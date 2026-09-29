@@ -149,6 +149,14 @@ registration there is silently ignored. (The proactive toolbar is unaffected —
 - The infra skip-list and config-error message patterns are hand-maintained; tune against real traces.
 - Abstract-base inheritance attribution is not recoverable from an exception trace alone.
 
+## Security
+
+What data the extension collects, where it goes, which credentials it uses (none), who can create a
+report, and what users can and cannot expect in terms of security is in
+[docs/SECURITY-ASSURANCE.md](docs/SECURITY-ASSURANCE.md). Report vulnerabilities privately as described
+in the organisation's [SECURITY.md](https://github.com/netresearch/.github/blob/main/SECURITY.md), not
+in a public issue. A change that adds or removes a security control updates that document.
+
 ## License
 
 GPL-2.0-or-later
