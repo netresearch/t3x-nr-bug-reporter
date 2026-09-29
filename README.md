@@ -119,7 +119,7 @@ Configuration/   Services.yaml, JavaScriptModules.php, RequestMiddlewares.php, I
 Resources/       Public/JavaScript/report-toolbar.js, Public/Icons/Extension.svg
 Tests/Unit/      attribution + ReportPolicy + GitHubTrackerResolver tests (portable, no TYPO3 boot)
 bin/, fixtures/  CLI dev/regression harness (local; needs a sibling TYPO3 core checkout)
-.github/         CI: composer validate + lint + PHPUnit on PHP 8.2-8.5
+.github/         CI: PHP lint + PHPUnit on PHP 8.2-8.5 × TYPO3 13.4/14.3, plus security checks
 ```
 
 ## Verification
@@ -134,7 +134,7 @@ Verified **live in booted DDEV instances — TYPO3 14.3.2 / PHP 8.5 (primary) an
 - ✅ The **error-page banner is injected** into the debug exception page through the handler, correctly
   gated (a core-only error shows "no one-click report", not a wrong report).
 - ✅ Unit tests pass for the safety-critical pure classes (attribution, `ReportPolicy` gating,
-  `GitHubTrackerResolver` 4-tier chain); CI workflow runs validate + lint + PHPUnit on PHP 8.2–8.5.
+  `GitHubTrackerResolver` 4-tier chain); CI workflow runs PHP lint + PHPUnit on PHP 8.2–8.5.
 - ✅ Every referenced TYPO3 FQCN/signature was verified against TYPO3 13.4/14.3 core source; the
   toolbar renders on both v13 (Bootstrap dropdown) and v14 (native popover API).
 
