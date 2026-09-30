@@ -27,7 +27,7 @@ The session values are written with `BackendUserAuthentication::setAndSaveSessio
 ## Where the data goes
 
 - **Toolbar dropdown.** `Classes/Backend/ReportToolbarItem.php` shows the module, URL, last error and action trail of the current session to the logged-in user.
-- **GitHub, when the user opens a link.** `IssueUrlComposer::composeForError()` and `composeForContext()` put the report into the `title` and `body` query parameters of a `https://github.com/<owner>/<repo>/issues/new` URL, capped at 6000 characters (`IssueUrlComposer::MAX_URL`). Opening the link transmits these parameters to github.com; the issue is published only when the user submits the form there. The links carry `rel="noopener noreferrer"` (`ReportToolbarItem.php`, `ReportingExceptionHandler.php`), so the backend page URL is not sent as `Referer`.
+- **GitHub, when the user opens a link.** `IssueUrlComposer::composeForError()` and `composeForContext()` put the report into the `title` and `body` query parameters of a `github.com/<owner>/<repo>/issues/new` URL (`https`, or `http` when a package declares its `support.issues` that way), capped at 6000 characters (`IssueUrlComposer::MAX_URL`). Opening the link transmits these parameters to github.com; the issue is published only when the user submits the form there. The links carry `rel="noopener noreferrer"` (`ReportToolbarItem.php`, `ReportingExceptionHandler.php`), so the backend page URL is not sent as `Referer`.
 - **Clipboard.** Without a configured repository the dropdown offers `IssueUrlComposer::plainTextReport()` as text, and `Resources/Public/JavaScript/report-toolbar.js` copies it to the clipboard in the browser; it sends nothing.
 
 Before the report leaves the backend, `IssueUrlComposer::redact()` replaces values that follow `password`, `passwd`, `token`, `secret`, `api_key`, `api-key`, `apikey`, `authorization` or `bearer`, `Bearer` tokens and JWT-like strings, and strips the absolute project path. It is applied to the exception message and file, the request URL and the parameters in both the issue body and the plain-text report (`Tests/Unit/Report/IssueUrlComposerTest.php`). The issue footer and the error-page banner ask the user to review the content before submitting.
@@ -47,7 +47,7 @@ The extension uses none. Its only setting is `defaultReportRepository` (`ext_con
 Users can expect:
 
 - **No automatic disclosure.** Nothing leaves the TYPO3 installation unless a user opens a report link or pastes the copied text.
-- **Links point to github.com only.** `GitHubTrackerResolver::deriveIssuesNew()` builds every link as `https://github.com/%s/%s/issues/new`; a `support.issues` value is used as given only when it matches the anchored pattern in `isGitHubRepoIssues()`; `TrackerEndpoint::isActionable()` requires the host `github.com`. Trackers on other hosts are reported as not actionable (`GitHubTrackerResolverTest::testNonGitHubTrackerIsRejected`, `testCoreSentinelIsNeverGitHub`).
+- **Links point to github.com only.** `GitHubTrackerResolver::deriveIssuesNew()` builds every derived link as `https://github.com/%s/%s/issues/new`; a `support.issues` value is used as given only when it matches the anchored pattern in `isGitHubRepoIssues()`, which accepts both `http://github.com/…` and `https://github.com/…`; `TrackerEndpoint::isActionable()` requires the host `github.com`. Trackers on other hosts are reported as not actionable (`GitHubTrackerResolverTest::testNonGitHubTrackerIsRejected`, `testCoreSentinelIsNeverGitHub`).
 - **A one-click report is withheld when attribution is weak.** `Classes/Decision/ReportPolicy.php` offers no link for low, core or unknown confidence, for traces shorter than 3 frames and for exceptions that look like configuration or integrator errors (`Tests/Unit/Decision/ReportPolicyTest.php`).
 - **The reporter does not break error handling or requests.** The capture in `ReportingExceptionHandler::handleException()` and the recording in `ActionTrailMiddleware::process()` catch every `Throwable` and continue.
 
@@ -86,7 +86,7 @@ Attackers considered: a backend user or visitor who places markup in data that t
 |------------------------|---------|
 | Cross-site scripting (CWE-79, A03:2021) | All dynamic values in the dropdown and the banner are escaped with `htmlspecialchars(..., ENT_QUOTES)`; the JavaScript only copies the `value` of a textarea |
 | Exposure of sensitive information (CWE-200) | `redact()` on the exception message and file, the request URL and the parameters, review prompts, no automatic transmission; residual risk documented above |
-| Links to untrusted hosts | Links are built for `https://github.com` only (`GitHubTrackerResolver`, `TrackerEndpoint::isActionable()`) |
+| Links to untrusted hosts | Links are built for the host `github.com` only (`GitHubTrackerResolver`, `TrackerEndpoint::isActionable()`) |
 | Server-side request forgery (CWE-918) | The extension makes no outgoing requests |
 | SQL injection (CWE-89, A03:2021) | `Classes/` issues no database queries |
 | Cross-site request forgery (CWE-352) | The extension registers no route or form that changes state; the session writes happen inside requests TYPO3 has already authenticated |
