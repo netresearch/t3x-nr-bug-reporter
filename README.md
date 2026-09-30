@@ -168,10 +168,11 @@ This extension follows the organisation-wide Netresearch policies:
 Checks that run on every pull request in this repository:
 
 - `.github/workflows/checks.yml`: Composer Audit (fails on any advisory for an installed package) and
-  Opengrep SAST (fails on findings of severity WARNING or higher), both through `security.yml` of
+  Opengrep SAST (`--config auto --error --severity WARNING`: fails on findings of rules with severity
+  WARNING; that flag leaves out the rules with severity ERROR), both through `security.yml` of
   `netresearch/typo3-ci-workflows`; Dependency Review (fails on added dependencies with a vulnerability of
-  severity high or higher); PHP licence check (`license-check.yml`, fails on an SSPL or BSL licensed
-  Composer dependency); CodeQL for the workflow files and `Resources/Public/JavaScript/` (it has no PHP
+  severity high or higher); PHP licence check (`license-check.yml`, fails when a Composer dependency
+  declares exactly `SSPL` or `BSL`; identifiers such as `SSPL-1.0` or `BUSL-1.1` do not match); CodeQL for the workflow files and `Resources/Public/JavaScript/` (it has no PHP
   analyser); Betterleaks secret scanning; zizmor for the workflow files. The `fuzz` job is called but runs
   nothing here, as the repository has no fuzz or mutation tests.
 - `.github/workflows/ci.yml`: PHP lint of every PHP file and the unit tests, for PHP 8.2 to 8.5 and
