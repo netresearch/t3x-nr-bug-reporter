@@ -9,7 +9,7 @@ toolbar that captures the current context.
 > Status: **beta / MVP.** The attribution engine is unit-tested and both backend features have been
 > verified live in booted TYPO3 **14.3.2 (PHP 8.5)** and **13.4.30 (PHP 8.3)** DDEV instances
 > (see [Verification](#verification)). Not yet hardened for TER release (no functional/E2E test suite,
-> static analysis, or RST docs yet).
+> no PHPStan or Rector configuration, and no RST docs yet).
 
 ## What it does
 
