@@ -1,3 +1,5 @@
+<!-- SPDX-License-Identifier: GPL-2.0-or-later -->
+<!-- SPDX-FileCopyrightText: Netresearch DTT GmbH -->
 # EXT:nr_bug_reporter
 
 A TYPO3 backend extension that turns an error into a **prefilled bug report on the originating
@@ -7,7 +9,7 @@ toolbar that captures the current context.
 > Status: **beta / MVP.** The attribution engine is unit-tested and both backend features have been
 > verified live in booted TYPO3 **14.3.2 (PHP 8.5)** and **13.4.30 (PHP 8.3)** DDEV instances
 > (see [Verification](#verification)). Not yet hardened for TER release (no functional/E2E test suite,
-> static analysis, or RST docs yet).
+> no PHPStan or Rector configuration, and no RST docs yet).
 
 ## What it does
 
@@ -117,7 +119,7 @@ Configuration/   Services.yaml, JavaScriptModules.php, RequestMiddlewares.php, I
 Resources/       Public/JavaScript/report-toolbar.js, Public/Icons/Extension.svg
 Tests/Unit/      attribution + ReportPolicy + GitHubTrackerResolver tests (portable, no TYPO3 boot)
 bin/, fixtures/  CLI dev/regression harness (local; needs a sibling TYPO3 core checkout)
-.github/         CI: composer validate + lint + PHPUnit on PHP 8.2-8.5
+.github/         CI: PHP lint + PHPUnit on PHP 8.2-8.5 × TYPO3 13.4/14.3, plus security checks
 ```
 
 ## Verification
@@ -132,7 +134,7 @@ Verified **live in booted DDEV instances — TYPO3 14.3.2 / PHP 8.5 (primary) an
 - ✅ The **error-page banner is injected** into the debug exception page through the handler, correctly
   gated (a core-only error shows "no one-click report", not a wrong report).
 - ✅ Unit tests pass for the safety-critical pure classes (attribution, `ReportPolicy` gating,
-  `GitHubTrackerResolver` 4-tier chain); CI workflow runs validate + lint + PHPUnit on PHP 8.2–8.5.
+  `GitHubTrackerResolver` 4-tier chain); CI workflow runs PHP lint + PHPUnit on PHP 8.2–8.5.
 - ✅ Every referenced TYPO3 FQCN/signature was verified against TYPO3 13.4/14.3 core source; the
   toolbar renders on both v13 (Bootstrap dropdown) and v14 (native popover API).
 
@@ -146,6 +148,48 @@ registration there is silently ignored. (The proactive toolbar is unaffected —
   the (planned) human-confirm step keep the blast radius small.
 - The infra skip-list and config-error message patterns are hand-maintained; tune against real traces.
 - Abstract-base inheritance attribution is not recoverable from an exception trace alone.
+
+## Governance and policies
+
+This extension follows the organisation-wide Netresearch policies:
+
+- [Governance](https://github.com/netresearch/.github/blob/main/GOVERNANCE.md): ownership, roles and their
+  responsibilities, how decisions are made and how disagreements are resolved.
+- [Roadmap](https://github.com/netresearch/.github/blob/main/ROADMAP.md): planned and excluded work for the
+  next twelve months. It applies here because this repository has no `ROADMAP.md` of its own.
+- [Handling of dependency and code analysis findings](https://github.com/netresearch/.github/blob/main/SECURITY.md#handling-of-dependency-and-code-analysis-findings):
+  which vulnerability, licence and static-analysis findings must be fixed, by when, and how exceptions are
+  recorded.
+- [Secret management](https://github.com/netresearch/.github/blob/main/SECURITY.md#secret-management):
+  where CI and release credentials are stored, who may use them, and when they are rotated.
+- [Access roster](https://github.com/netresearch/.github/blob/main/docs/access-roster.md): the accounts with
+  admin or write access to this repository.
+
+Checks that run on every pull request in this repository:
+
+- `.github/workflows/checks.yml`: Composer Audit (fails on any advisory for an installed package) and
+  Opengrep SAST (`--config auto --error --severity WARNING`: fails on findings of rules with severity
+  WARNING; that flag leaves out the rules with severity ERROR), both through `security.yml` of
+  `netresearch/typo3-ci-workflows`; Dependency Review (fails on added dependencies with a vulnerability of
+  severity high or higher); PHP licence check (`license-check.yml`, fails when a Composer dependency
+  declares exactly `SSPL` or `BSL`; identifiers such as `SSPL-1.0` or `BUSL-1.1` do not match); CodeQL for the workflow files and `Resources/Public/JavaScript/` (it has no PHP
+  analyser); Betterleaks secret scanning; zizmor for the workflow files. The `fuzz` job is called but runs
+  nothing here, as the repository has no fuzz or mutation tests.
+- `.github/workflows/ci.yml`: PHP lint of every PHP file and the unit tests, for PHP 8.2 to 8.5 and
+  TYPO3 13.4 and 14.3. Code style, PHPStan, Rector and functional tests are switched off, as the repository
+  has no configuration for them.
+- `.github/workflows/harness-verify.yml`: `scripts/verify-harness.sh` checks that `AGENTS.md` and `docs/`
+  match the repository.
+
+No exception is recorded: `composer.json` has no `config.audit.ignore` entry.
+
+## Security
+
+What data the extension collects, where it goes, which credentials it uses (none), who can create a
+report, and what users can and cannot expect in terms of security is in
+[docs/SECURITY-ASSURANCE.md](docs/SECURITY-ASSURANCE.md). Report vulnerabilities privately as described
+in the organisation's [SECURITY.md](https://github.com/netresearch/.github/blob/main/SECURITY.md), not
+in a public issue. A change that adds or removes a security control updates that document.
 
 ## License
 

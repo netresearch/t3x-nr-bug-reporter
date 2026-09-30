@@ -1,3 +1,5 @@
+<!-- SPDX-License-Identifier: GPL-2.0-or-later -->
+<!-- SPDX-FileCopyrightText: Netresearch DTT GmbH -->
 # Architecture — EXT:nr_bug_reporter
 
 Agent-facing component map. Every path and claim below is verified against the source; when the code and this file disagree, the code wins — update this file in the same PR.

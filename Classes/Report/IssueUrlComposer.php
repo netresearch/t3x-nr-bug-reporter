@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ * SPDX-FileCopyrightText: Netresearch DTT GmbH
+ */
+
 declare(strict_types=1);
 
 namespace Netresearch\NrBugReporter\Report;
@@ -62,7 +67,7 @@ final class IssueUrlComposer
     {
         $lines = ['Backend issue report', ''];
         $lines[] = 'Module: ' . ($context->module ?? '-');
-        $lines[] = 'URL: ' . ($context->url ?? '-');
+        $lines[] = 'URL: ' . $this->redact((string) ($context->url ?? '-'));
         if ($context->params !== []) {
             $lines[] = 'Params: ' . $this->flattenParams($context->params);
         }
