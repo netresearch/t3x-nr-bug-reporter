@@ -25,8 +25,11 @@ jobs:
       archive-prefix: 'nr-bug-reporter'
       package-name: 'netresearch/nr-bug-reporter'
       extension-key: 'nr_bug_reporter'
-      # Not published to TER: the extension targets Composer-mode installs,
-      # and the extension key nr_bug_reporter is not registered there.
-      skip-ter: true
+      # tailor packages the working directory and ignores .gitattributes, so
+      # this list is what keeps agent notes, the dev harness and its fixtures
+      # out of the TER zip.
+      exclude-from-packaging: 'Build/ExcludeFromPackaging.php'
       # No Documentation/ directory yet, so docs.typo3.org has nothing to render.
       skip-docs: true
+    secrets:
+      TYPO3_TER_ACCESS_TOKEN: ${{ secrets.TYPO3_TER_ACCESS_TOKEN }}
