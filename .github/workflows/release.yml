@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: Netresearch DTT GmbH
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  # Retry a release whose publication target failed, without deleting and
+  # re-cutting the tag: `gh workflow run release.yml --ref vX.Y.Z`. The
+  # reusable leaves a published GitHub release as it is, runs the targets
+  # again and rewrites the "Publication status" section of the release body.
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  release:
+    uses: netresearch/typo3-ci-workflows/.github/workflows/release-typo3-extension.yml@main
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    with:
+      archive-prefix: 'nr-bug-reporter'
+      package-name: 'netresearch/nr-bug-reporter'
+      extension-key: 'nr_bug_reporter'
+      # Not published to TER: the extension targets Composer-mode installs,
+      # and the extension key nr_bug_reporter is not registered there.
+      skip-ter: true
+      # No Documentation/ directory yet, so docs.typo3.org has nothing to render.
+      skip-docs: true
