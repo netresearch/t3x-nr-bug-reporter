@@ -22,8 +22,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * Which page the handlers render. The production exception handler's page reaches every visitor,
  * so it must be the core production error page: a generic title and message, no exception message,
- * file or trace. The core ErrorPageController is replaced by a double that records its arguments,
- * because rendering its Fluid template needs a booted TYPO3.
+ * file or trace. The core ErrorPageController is replaced by ErrorPageControllerDouble, which records
+ * its arguments, because rendering its Fluid template needs a booted TYPO3.
  */
 final class ReportingExceptionHandlerTest extends TestCase
 {
@@ -108,15 +108,7 @@ final class ReportingExceptionHandlerTest extends TestCase
     private function errorPageDouble(): \ArrayObject
     {
         $calls = new \ArrayObject();
-        $double = $this->createStub(ErrorPageController::class);
-        $double->method('errorAction')->willReturnCallback(
-            static function (mixed ...$arguments) use ($calls): string {
-                $calls->append($arguments);
-
-                return 'production page';
-            },
-        );
-        GeneralUtility::addInstance(ErrorPageController::class, $double);
+        GeneralUtility::addInstance(ErrorPageController::class, new ErrorPageControllerDouble($calls));
 
         return $calls;
     }

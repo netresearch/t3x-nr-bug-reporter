@@ -11,6 +11,7 @@ namespace Netresearch\NrBugReporter\Error;
 
 use TYPO3\CMS\Core\Error\DebugExceptionHandler;
 use TYPO3\CMS\Core\Error\ProductionExceptionHandler;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Extends the core DebugExceptionHandler so an uncaught error is (1) attributed to its originating
@@ -39,7 +40,8 @@ final class ReportingExceptionHandler extends DebugExceptionHandler
     public function echoExceptionWeb(\Throwable $exception): void
     {
         if (!self::rendersDebugPage()) {
-            (new ProductionExceptionHandler())->echoExceptionWeb($exception);
+            // makeInstance() gives the delegate its logger, as core does for the registered handler.
+            GeneralUtility::makeInstance(ProductionExceptionHandler::class)->echoExceptionWeb($exception);
 
             return;
         }
