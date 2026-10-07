@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `ReportingProductionExceptionHandler` for
+  `$GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler']`. It
+  extends the core `ProductionExceptionHandler`: visitors get the core
+  production error page, and the error is recorded for the toolbar of a
+  logged-in backend user.
+
+### Fixed
+
+- `ReportingExceptionHandler` renders the core production error page, not
+  the debug page, when it is registered as `productionExceptionHandler`.
+  The README and the comment in `ext_localconf.php` now name
+  `ReportingProductionExceptionHandler` for that setting; installations
+  that followed the README of 0.1.0 should switch to it.
+
 ## [0.1.0] - 2026-09-30
 
 First release, for TYPO3 13.4 LTS and 14.3 LTS on PHP 8.2 to 8.5, installed

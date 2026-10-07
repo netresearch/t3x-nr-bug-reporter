@@ -4,7 +4,7 @@
 
 What users of `nr_bug_reporter` can and cannot expect in terms of security, and the argument for it: the data the extension collects, where that data goes, which credentials it uses, who can create a report, the threat model, trust boundaries, the design principles applied and how common weaknesses are countered. Every claim names the file that implements it. Components and data flow: [ARCHITECTURE.md](ARCHITECTURE.md). Vulnerability reporting: [SECURITY.md of the organisation](https://github.com/netresearch/.github/blob/main/SECURITY.md).
 
-The document describes the code on `main`. It covers the proactive toolbar item and the error-page banner with `ReportingExceptionHandler` registered as `debugExceptionHandler`, as the README describes for the Development error page. Statements about dependencies refer to the versions a `composer install` resolved on 2026-09-30: TYPO3 14.3.7, PHPUnit 13.3.6.
+The document describes the code on `main`. It covers the proactive toolbar item, the error-page banner with `ReportingExceptionHandler` registered as `debugExceptionHandler`, and `ReportingProductionExceptionHandler` registered as `productionExceptionHandler`, as the README describes. Statements about dependencies refer to the versions a `composer install` resolved on 2026-09-30: TYPO3 14.3.7, PHPUnit 13.3.6.
 
 ## What the extension does, security-wise
 
@@ -19,7 +19,7 @@ It has no database table, no backend route or AJAX endpoint of its own, and no E
 | Current backend module identifier, route path and full request URL | `Classes/Context/BackendContextCollector.php` | Not stored; rendered into the toolbar dropdown and the report |
 | The GET parameters `id`, `edit`, `table`, `uid`, `action`, `controller`; for array values only the keys | `BackendContextCollector::SAFE_PARAMS` and `fromRequest()` | Not stored |
 | Up to 10 recent backend actions: module, route path, HTTP method, time | `Classes/Middleware/ActionTrailMiddleware.php`, `SessionStore::recordAction()` | Backend user session |
-| Last uncaught exception: class, message, code, file, line, attributed package, confidence, tracker URL and status, time | `Classes/Error/ReportingExceptionHandler.php`, `Classes/Capture/CapturedError.php` | Backend user session (`SessionStore::recordError()`); the stack trace itself is not kept |
+| Last uncaught exception: class, message, code, file, line, attributed package, confidence, tracker URL and status, time | `Classes/Error/CapturesUncaughtErrors.php`, `Classes/Capture/CapturedError.php` | Backend user session (`SessionStore::recordError()`); the stack trace itself is not kept |
 | TYPO3 and PHP version | `Classes/Report/IssueUrlComposer.php` | Not stored |
 
 The session values are written with `BackendUserAuthentication::setAndSaveSessionData()` (`Classes/Capture/SessionStore.php`) and stay there until the next error replaces them or the backend session ends; they are stored unredacted. The extension does not read the user name, e-mail address, IP address, cookies or browser data, and takes no screenshots.
@@ -49,7 +49,7 @@ Users can expect:
 - **No automatic disclosure.** Nothing leaves the TYPO3 installation unless a user opens a report link or pastes the copied text.
 - **Links point to github.com only.** `GitHubTrackerResolver::deriveIssuesNew()` builds every derived link as `https://github.com/%s/%s/issues/new`; a `support.issues` value is used as given only when it matches the anchored pattern in `isGitHubRepoIssues()`, which accepts both `http://github.com/…` and `https://github.com/…`; `TrackerEndpoint::isActionable()` requires the host `github.com`. Trackers on other hosts are reported as not actionable (`GitHubTrackerResolverTest::testNonGitHubTrackerIsRejected`, `testCoreSentinelIsNeverGitHub`).
 - **A one-click report is withheld when attribution is weak.** `Classes/Decision/ReportPolicy.php` offers no link for low, core or unknown confidence, for traces shorter than 3 frames and for exceptions that look like configuration or integrator errors (`Tests/Unit/Decision/ReportPolicyTest.php`).
-- **The reporter does not break error handling or requests.** The capture in `ReportingExceptionHandler::handleException()` and the recording in `ActionTrailMiddleware::process()` catch every `Throwable` and continue.
+- **The reporter does not break error handling or requests.** The capture in both handlers (`CapturesUncaughtErrors::captureQuietly()`) and the recording in `ActionTrailMiddleware::process()` catch every `Throwable` and continue.
 
 Users cannot expect:
 
