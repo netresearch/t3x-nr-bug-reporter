@@ -22,7 +22,7 @@ The extension turns a TYPO3 backend error into a prefilled bug report on the ori
 | Error-page integration | `Classes/Error/ReportingExceptionHandler.php`, `Classes/Error/ReportingProductionExceptionHandler.php`, `Classes/Error/CapturesUncaughtErrors.php` | `ReportingExceptionHandler` extends core `DebugExceptionHandler` (runs the engine, records the error, injects the banner; renders the core production page when registered as `productionExceptionHandler`); `ReportingProductionExceptionHandler` extends core `ProductionExceptionHandler` (runs the engine, records the error, no banner); the trait holds the shared capture |
 | Proactive toolbar | `Classes/Backend/ReportToolbarItem.php`, `Classes/EventListener/BackendAssetLoader.php`, `Resources/Public/JavaScript/report-toolbar.js` | Toolbar dropdown with context, last error, action trail; JS module loaded via `AfterBackendPageRenderEvent` |
 | Action trail | `Classes/Middleware/ActionTrailMiddleware.php` | PSR-15 middleware recording recent backend actions into the `SessionStore` |
-| Wiring | `Configuration/Services.yaml`, `Configuration/RequestMiddlewares.php`, `Configuration/JavaScriptModules.php`, `Configuration/Icons.php` | DI (handler excluded), middleware registration, ES-module import map, toolbar icon |
+| Wiring | `Configuration/Services.yaml`, `Configuration/RequestMiddlewares.php`, `Configuration/JavaScriptModules.php`, `Configuration/Icons.php` | DI (both exception handlers excluded), middleware registration, ES-module import map, toolbar icon |
 
 ## Dependency Rules
 

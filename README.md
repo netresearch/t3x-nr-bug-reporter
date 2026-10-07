@@ -116,7 +116,7 @@ Classes/
   Capture/       CapturedError, SessionStore                                   (last error + action trail)
   Context/       BackendContext, BackendContextCollector                       (module/route/url)
   Report/        IssueUrlComposer                                              (prefilled URL + redaction)
-  Error/         ReportingExceptionHandler                                     (error-page integration)
+  Error/         ReportingExceptionHandler, ReportingProductionExceptionHandler (error-page integration)
   Backend/       ReportToolbarItem                                             (proactive toolbar)
   Middleware/    ActionTrailMiddleware                                         (records recent actions)
   EventListener/ BackendAssetLoader                                            (loads the toolbar JS)
