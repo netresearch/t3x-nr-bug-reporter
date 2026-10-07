@@ -57,7 +57,7 @@ CI runs exactly `vendor/bin/phpunit` on PHP 8.2–8.5 × TYPO3 ^13.4/^14.3 (see 
 
 <!-- AGENTS-GENERATED:START patterns -->
 ## Patterns to Follow
-- Extend `PHPUnit\Framework\TestCase` directly; keep tests free of TYPO3 imports so they stay portable. Exception: `IssueUrlComposerTest` uses `Environment` and `Typo3Version` from typo3/cms-core, which need no TYPO3 boot, only `Environment::initialize()` in `setUp()`; `ReportingExceptionHandlerTest` does the same and replaces the core `ErrorPageController` with a stub (`GeneralUtility::addInstance()`)
+- Extend `PHPUnit\Framework\TestCase` directly; keep tests free of TYPO3 imports so they stay portable. Exception: `IssueUrlComposerTest` uses `Environment` and `Typo3Version` from typo3/cms-core, which need no TYPO3 boot, only `Environment::initialize()` in `setUp()`; `ReportingExceptionHandlerTest` does the same and replaces the core `ErrorPageController` with the hand-written `Unit/Error/ErrorPageControllerDouble.php` (`GeneralUtility::addInstance()`; PHPUnit 10.5 cannot double the readonly controller)
 - One focused test method per trace/package scenario with an explanatory assertion message (current style — no data providers in use)
 - Resolver tests read manifests from `Tests/Fixtures/packages/` — add a new fixture package per new resolution tier or edge case
 - Attribution scenarios that need a *real* package index belong in the `../bin/` harness, not here
