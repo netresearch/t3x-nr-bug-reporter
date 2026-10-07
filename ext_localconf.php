@@ -14,12 +14,12 @@ defined('TYPO3') or die();
 //
 // The error-page "Report this bug" feature CANNOT be enabled from ext_localconf.php: TYPO3 reads the
 // exception-handler class names during early bootstrap (Bootstrap::initializeErrorHandling), BEFORE
-// ext_localconf.php is loaded. Enable it in config/system/additional.php instead — add ONE of:
+// ext_localconf.php is loaded. Enable it in config/system/additional.php instead — add one or both:
 //
 //   // Development error page (debug handler):
 //   $GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler']
 //       = \Netresearch\NrBugReporter\Error\ReportingExceptionHandler::class;
 //
-//   // Production capture (changes production error rendering — opt in deliberately):
+//   // Production capture (core production error page; the error is recorded for the toolbar):
 //   $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler']
-//       = \Netresearch\NrBugReporter\Error\ReportingExceptionHandler::class;
+//       = \Netresearch\NrBugReporter\Error\ReportingProductionExceptionHandler::class;

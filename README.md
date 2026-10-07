@@ -41,15 +41,20 @@ composer require netresearch/nr-bug-reporter
   toolbar offers copy-to-clipboard.
 - **Error-page "Report this bug" feature — opt-in via `config/system/additional.php`.** It cannot be
   enabled from the extension: TYPO3 reads the exception-handler class during early bootstrap, *before*
-  `ext_localconf.php` runs. Add ONE of:
+  `ext_localconf.php` runs. Add one or both:
   ```php
-  // Development error page:
+  // Development error page with the "Report this bug" banner:
   $GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler']
       = \Netresearch\NrBugReporter\Error\ReportingExceptionHandler::class;
-  // Production capture (changes production error rendering — opt in deliberately):
+  // Production capture: visitors get the core production error page; the error is recorded
+  // for the toolbar of a logged-in backend user:
   $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler']
-      = \Netresearch\NrBugReporter\Error\ReportingExceptionHandler::class;
+      = \Netresearch\NrBugReporter\Error\ReportingProductionExceptionHandler::class;
   ```
+  `ReportingExceptionHandler` extends the core debug handler and belongs only in
+  `debugExceptionHandler`. Registered as `productionExceptionHandler` (as the README of 0.1.0
+  showed), it renders the core production error page instead of the debug page; switch that
+  setting to `ReportingProductionExceptionHandler`.
 
 Targets **TYPO3 13.4 LTS + 14.3 LTS**, **PHP 8.2–8.5**, Composer-mode installs.
 
