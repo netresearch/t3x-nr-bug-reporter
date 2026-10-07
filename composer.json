@@ -1,7 +1,7 @@
 {
     "name": "netresearch/nr-bug-reporter",
     "type": "typo3-cms-extension",
-    "description": "TYPO3 backend bug reporter: attribute an error to its originating Composer package and open a prefilled issue on that package's upstream GitHub tracker. Adds an error-page report action and a proactive backend toolbar item.",
+    "description": "Bug Reporter - Attribute an error to its originating Composer package and open a prefilled issue on that package's upstream GitHub tracker, from the error page or the backend toolbar.",
     "license": "GPL-2.0-or-later",
     "keywords": ["typo3", "backend", "bug-report", "error-handling", "github"],
     "require": {
