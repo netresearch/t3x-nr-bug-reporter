@@ -8,7 +8,7 @@
 /** @var string $_EXTKEY */
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Bug Reporter',
-    'description' => 'Attribute a TYPO3 error to its originating Composer package and open a prefilled issue on that package\'s upstream GitHub tracker. Adds an error-page report action and a proactive backend toolbar item.',
+    'description' => 'Attribute an error to its originating Composer package and open a prefilled issue on that package\'s upstream GitHub tracker, from the error page or the backend toolbar.',
     'category' => 'be',
     'author' => 'Netresearch',
     'author_email' => '',
