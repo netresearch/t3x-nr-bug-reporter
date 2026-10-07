@@ -17,6 +17,7 @@ Portable PHPUnit unit tests for the safety-critical pure classes (attribution he
 | `Unit/Decision/ReportPolicyTest.php` | Gating rules: confidence thresholds, short traces, config/author errors |
 | `Unit/Resolver/GitHubTrackerResolverTest.php` | 4-tier tracker chain against the fixture packages |
 | `Unit/Report/IssueUrlComposerTest.php` | Redaction of the prefilled issue body and the copy-to-clipboard report |
+| `Unit/Error/ReportingExceptionHandlerTest.php` | Which error page each handler renders (debug page only from the debug slot) |
 | `Fixtures/packages/*/composer.json` | Minimal package manifests (gh-issues, gh-homepage, gitlab) for resolver tests |
 <!-- AGENTS-GENERATED:END filemap -->
 
@@ -34,6 +35,7 @@ Tests/
 ├── Unit/
 │   ├── Attribution/   # PackageAttributionServiceTest
 │   ├── Decision/      # ReportPolicyTest
+│   ├── Error/         # ReportingExceptionHandlerTest
 │   ├── Report/        # IssueUrlComposerTest
 │   └── Resolver/      # GitHubTrackerResolverTest
 └── Fixtures/
@@ -55,7 +57,7 @@ CI runs exactly `vendor/bin/phpunit` on PHP 8.2–8.5 × TYPO3 ^13.4/^14.3 (see 
 
 <!-- AGENTS-GENERATED:START patterns -->
 ## Patterns to Follow
-- Extend `PHPUnit\Framework\TestCase` directly; keep tests free of TYPO3 imports so they stay portable. Exception: `IssueUrlComposerTest` uses `Environment` and `Typo3Version` from typo3/cms-core, which need no TYPO3 boot, only `Environment::initialize()` in `setUp()`
+- Extend `PHPUnit\Framework\TestCase` directly; keep tests free of TYPO3 imports so they stay portable. Exception: `IssueUrlComposerTest` uses `Environment` and `Typo3Version` from typo3/cms-core, which need no TYPO3 boot, only `Environment::initialize()` in `setUp()`; `ReportingExceptionHandlerTest` does the same and replaces the core `ErrorPageController` with a stub (`GeneralUtility::addInstance()`)
 - One focused test method per trace/package scenario with an explanatory assertion message (current style — no data providers in use)
 - Resolver tests read manifests from `Tests/Fixtures/packages/` — add a new fixture package per new resolution tier or edge case
 - Attribution scenarios that need a *real* package index belong in the `../bin/` harness, not here

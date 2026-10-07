@@ -19,7 +19,7 @@ The extension turns a TYPO3 backend error into a prefilled bug report on the ori
 | Capture | `Classes/Capture/` (`CapturedError`, `SessionStore`) | Persists the last attributed error and a recent-actions trail in the backend user session |
 | Context | `Classes/Context/` (`BackendContext`, `BackendContextCollector`) | Collects current module/route/URL for the proactive report |
 | Report composition | `Classes/Report/IssueUrlComposer.php` | Prefilled GitHub issue URL; redacts paths/sensitive values in title and body |
-| Error-page integration | `Classes/Error/ReportingExceptionHandler.php` | Extends core `DebugExceptionHandler`; runs the engine, records the error, injects the banner |
+| Error-page integration | `Classes/Error/ReportingExceptionHandler.php`, `Classes/Error/ReportingProductionExceptionHandler.php`, `Classes/Error/CapturesUncaughtErrors.php` | `ReportingExceptionHandler` extends core `DebugExceptionHandler` (runs the engine, records the error, injects the banner; renders the core production page when registered as `productionExceptionHandler`); `ReportingProductionExceptionHandler` extends core `ProductionExceptionHandler` (runs the engine, records the error, no banner); the trait holds the shared capture |
 | Proactive toolbar | `Classes/Backend/ReportToolbarItem.php`, `Classes/EventListener/BackendAssetLoader.php`, `Resources/Public/JavaScript/report-toolbar.js` | Toolbar dropdown with context, last error, action trail; JS module loaded via `AfterBackendPageRenderEvent` |
 | Action trail | `Classes/Middleware/ActionTrailMiddleware.php` | PSR-15 middleware recording recent backend actions into the `SessionStore` |
 | Wiring | `Configuration/Services.yaml`, `Configuration/RequestMiddlewares.php`, `Configuration/JavaScriptModules.php`, `Configuration/Icons.php` | DI (handler excluded), middleware registration, ES-module import map, toolbar icon |
@@ -29,7 +29,7 @@ The extension turns a TYPO3 backend error into a prefilled bug report on the ori
 No enforced architecture test exists (`Tests/Architecture/` is absent); the following is the observed state to preserve:
 
 - `Attribution/`, `Resolver/`, `Decision/` import no TYPO3 classes — this keeps `Tests/Unit/` runnable without a TYPO3 boot. Do not add TYPO3 imports there.
-- `Error/ReportingExceptionHandler` is instantiated by core, not the container: it is excluded from DI in `Services.yaml` and constructs engine objects directly (`new PackageAttributionService(...)`, `GeneralUtility::makeInstance(...)` for the TYPO3-coupled parts).
+- `Error/ReportingExceptionHandler` and `Error/ReportingProductionExceptionHandler` are instantiated by core, not the container: they are excluded from DI in `Services.yaml` and constructs engine objects directly (`new PackageAttributionService(...)`, `GeneralUtility::makeInstance(...)` for the TYPO3-coupled parts).
 - Everything else is constructor-injected via `Services.yaml` autowiring.
 
 ## Data Flow

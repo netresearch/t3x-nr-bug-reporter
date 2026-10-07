@@ -17,7 +17,9 @@ Attribution engine + TYPO3 backend integration of EXT:nr_bug_reporter: map an ex
 | `Resolver/GitHubTrackerResolver.php` | 4-tier tracker chain (support.issues → source/homepage → lock/installed.json VCS url → curated map), GitHub-host gated |
 | `Decision/ReportPolicy.php` | Safety gate: withholds the one-click report for low/core/none confidence, short traces, config/author errors |
 | `Report/IssueUrlComposer.php` | Builds the prefilled issue URL, redacts local paths/sensitive data |
-| `Error/ReportingExceptionHandler.php` | Extends core `DebugExceptionHandler`; injects the report banner into the error page |
+| `Error/ReportingExceptionHandler.php` | Extends core `DebugExceptionHandler`; injects the report banner into the debug error page; renders the core production page when registered as `productionExceptionHandler` |
+| `Error/ReportingProductionExceptionHandler.php` | Extends core `ProductionExceptionHandler`; records the error for the toolbar, no banner |
+| `Error/CapturesUncaughtErrors.php` | Trait with the capture both handlers share (attribution, session record, report URL) |
 | `Backend/ReportToolbarItem.php` | Proactive toolbar item (v13 Bootstrap dropdown / v14 popover) |
 <!-- AGENTS-GENERATED:END filemap -->
 
@@ -33,8 +35,8 @@ Attribution engine + TYPO3 backend integration of EXT:nr_bug_reporter: map an ex
 ## Setup & environment
 - Install: `composer install` (repo root; dev-dependency is PHPUnit only)
 - PHP: ^8.2 · TYPO3: ^13.4 || ^14.3 (Composer-mode installs)
-- DI: `Configuration/Services.yaml` autowires `Classes/*`; `Error\ReportingExceptionHandler` is **excluded** from DI — core instantiates it via `GeneralUtility::makeInstance()`
-- The exception handler is activated only via `config/system/additional.php` (`debugExceptionHandler`/`productionExceptionHandler`) — `ext_localconf.php` runs too late (see its header comment)
+- DI: `Configuration/Services.yaml` autowires `Classes/*`; `Error\ReportingExceptionHandler` and `Error\ReportingProductionExceptionHandler` are **excluded** from DI — core instantiates them via `GeneralUtility::makeInstance()`
+- The exception handler is activated only via `config/system/additional.php` (`debugExceptionHandler` → `ReportingExceptionHandler`, `productionExceptionHandler` → `ReportingProductionExceptionHandler`) — `ext_localconf.php` runs too late (see its header comment)
 <!-- AGENTS-GENERATED:END setup -->
 
 <!-- AGENTS-GENERATED:START structure -->
@@ -47,7 +49,7 @@ Service/       PackageIndexProvider                                         (run
 Capture/       CapturedError, SessionStore                                  (last error + action trail)
 Context/       BackendContext, BackendContextCollector                      (module/route/url)
 Report/        IssueUrlComposer                                             (prefilled URL + redaction)
-Error/         ReportingExceptionHandler                                    (error-page integration)
+Error/         ReportingExceptionHandler, ReportingProductionExceptionHandler (error-page integration)
 Backend/       ReportToolbarItem                                            (proactive toolbar)
 Middleware/    ActionTrailMiddleware                                        (records recent actions)
 EventListener/ BackendAssetLoader                                           (loads the toolbar JS)
