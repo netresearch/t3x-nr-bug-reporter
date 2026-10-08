@@ -1,6 +1,6 @@
 <!-- SPDX-License-Identifier: GPL-2.0-or-later -->
 <!-- SPDX-FileCopyrightText: Netresearch DTT GmbH -->
-<!-- Managed by agent: keep sections and order; edit content, not structure. Last updated: 2026-08-19 -->
+<!-- Managed by agent: keep sections and order; edit content, not structure. Last updated: 2026-10-08 -->
 
 # AGENTS.md — workflows
 
@@ -14,12 +14,16 @@ Thin callers of the shared netresearch reusable workflows. All real CI logic (ch
 | File | Purpose |
 |------|---------|
 | `ci.yml` | Calls `typo3-ci-workflows/ci.yml@main`: PHP `8.2–8.5` × TYPO3 `^13.4`/`^14.3`; `run-cgl`/`run-phpstan`/`run-rector` disabled (no such setup in this repo); unit tests via `vendor/bin/phpunit` |
-| `checks.yml` | Security/quality jobs (security, betterleaks, zizmor, fuzz, license-check, codeql, scorecard, dependency-review, pr-quality) + the `All security checks` gate. **Byte-identical and drift-enforced across every t3x repo** — only `ci.yml` carries extension-specific settings |
+| `checks.yml` | Security/quality jobs (security, betterleaks, zizmor, fuzz, license-check, codeql, scorecard, dependency-review, pr-quality) + the `All security checks` gate. **Byte-identical and drift-enforced across every t3x repo** — only `ci.yml` and `release.yml` carry extension-specific settings |
 | `harness-verify.yml` | Agent-harness consistency check (`scripts/verify-harness.sh`) via the shared `script-check` reusable |
+| `release.yml` | On a pushed `v*` tag, calls `typo3-ci-workflows/release-typo3-extension.yml@main` (extension-specific inputs live HERE) |
+| `ter-publish.yml` | Manual `workflow_dispatch`: uploads the version `ext_emconf.php` declares to TER via `typo3-ci-workflows/publish-to-ter.yml@main` |
+| `check-template-drift.yml` | Fails when a file governed by the `typo3-extension` template of `netresearch/.github` differs from it; `.github/template.yaml` lists `ci.yml` and `release.yml` as intentional drift |
+| `auto-merge-deps.yml`, `labeler.yml`, `community.yml` | Template callers of the shared auto-merge, labeler, greetings, stale and lock workflows in `netresearch/.github` (`pull_request_target`, `issues`, schedule) |
 <!-- AGENTS-GENERATED:END filemap -->
 
 ## Workflow files
-- 3 workflows, all `uses:`-only thin callers — no inline `run:` steps except the gate job inside `checks.yml`
+- 9 workflows, all `uses:`-only thin callers — no inline `run:` steps except the gate job inside `checks.yml`
 
 <!-- AGENTS-GENERATED:START structure -->
 ## Directory structure
@@ -29,6 +33,9 @@ Thin callers of the shared netresearch reusable workflows. All real CI logic (ch
     ci.yml              → build/test matrix (extension-specific inputs live HERE)
     checks.yml          → security jobs + "All security checks" gate (drift-enforced, do not customize)
     harness-verify.yml  → AGENTS.md/docs consistency check
+    release.yml         → tag release (extension-specific inputs live HERE)
+    ter-publish.yml     → manual TER upload
+    check-template-drift.yml, auto-merge-deps.yml, labeler.yml, community.yml → template callers
 ```
 No composite actions, no repo-level PR template (org-level `netresearch/.github` provides it), no CODEOWNERS.
 <!-- AGENTS-GENERATED:END structure -->
@@ -39,7 +46,7 @@ No composite actions, no repo-level PR template (org-level `netresearch/.github`
 - `uses:` jobs get exactly the reusable's caller contract in their `permissions:` block; top-level `permissions: {}` (checks.yml) or `contents: read` (ci.yml)
 - Pin third-party actions to a full commit SHA with a version comment (see harden-runner in the gate job)
 - PR-only jobs (`dependency-review`, `pr-quality`) and app-posted checks (CodeQL etc.) are **not requirable** in rulesets — require `All security checks` and `ci / All CI checks` instead (merge-queue safe)
-- Extension-specific changes belong in `ci.yml` only; `checks.yml` edits must land in all t3x repos or none
+- Extension-specific changes belong in `ci.yml` and `release.yml` only; `checks.yml` edits must land in all t3x repos or none
 <!-- AGENTS-GENERATED:END code-style -->
 
 <!-- AGENTS-GENERATED:START patterns -->
@@ -63,7 +70,7 @@ Before adding an input, read the reusable's `workflow_call.inputs` in `netresear
 ## Security & safety
 - **Minimal permissions**: start from `permissions: {}` and grant per job exactly what the reusable's contract requires
 - **Pin actions** to full commit SHA, never mutable tags
-- Never use `secrets: inherit`; this repo's workflows pass no secrets
+- Never use `secrets: inherit`; pass secrets explicitly (`TYPO3_TER_ACCESS_TOKEN` in `release.yml` and `ter-publish.yml`, `PROJECT_APP_ID` and `PROJECT_APP_PRIVATE_KEY` in `auto-merge-deps.yml`)
 - Do not weaken or remove gate jobs to make a PR green — fix the failing job
 <!-- AGENTS-GENERATED:END security -->
 
