@@ -34,7 +34,7 @@ Before the report leaves the backend, `IssueUrlComposer::redact()` replaces valu
 
 ## Credentials
 
-The extension uses none. Its only setting is `defaultReportRepository` (`ext_conf_template.txt`), a GitHub repository URL. Filing an issue happens in the user's browser, authenticated by the user's own GitHub session. There is nothing to store or rotate. The repository's workflows pass no secrets to the reusable workflows they call (`.github/workflows/`).
+The extension uses none. Its only setting is `defaultReportRepository` (`ext_conf_template.txt`), a GitHub repository URL. Filing an issue happens in the user's browser, authenticated by the user's own GitHub session. There is nothing to store or rotate. The repository's workflows pass secrets to the reusable workflows they call only by name, never with `secrets: inherit`: `release.yml` and `ter-publish.yml` pass `TYPO3_TER_ACCESS_TOKEN`, and `auto-merge-deps.yml` passes the merge App's `PROJECT_APP_ID` and `PROJECT_APP_PRIVATE_KEY` (`.github/workflows/`).
 
 ## Who can create a report
 
