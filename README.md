@@ -184,6 +184,14 @@ Checks that run on every pull request in this repository:
   has no configuration for them.
 - `.github/workflows/harness-verify.yml`: `scripts/verify-harness.sh` checks that `AGENTS.md` and `docs/`
   match the repository.
+- `.github/workflows/check-template-drift.yml`: Template drift fails when a file governed by the
+  `typo3-extension` template of `netresearch/.github` differs from it; `.github/template.yaml` records
+  the template and the intentional drift (`ci.yml` and `release.yml`).
+- `.github/workflows/labeler.yml` (`pull_request_target`) applies labels from `.github/labeler.yml`,
+  `.github/workflows/community.yml` (`pull_request_target` and `issues`) greets first-time contributors and
+  runs a daily stale and lock job, and `.github/workflows/auto-merge-deps.yml` (`pull_request_target`)
+  handles pull requests from Renovate and Dependabot. All three call shared workflows in
+  `netresearch/.github` that run no pull request code.
 
 No exception is recorded: `composer.json` has no `config.audit.ignore` entry.
 
