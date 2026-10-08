@@ -1,6 +1,6 @@
 <!-- SPDX-License-Identifier: GPL-2.0-or-later -->
 <!-- SPDX-FileCopyrightText: Netresearch DTT GmbH -->
-<!-- Managed by agent: keep sections and order; edit content, not structure. Last updated: 2026-08-19 -->
+<!-- Managed by agent: keep sections and order; edit content, not structure. Last updated: 2026-10-08 -->
 
 # AGENTS.md — workflows
 
@@ -46,7 +46,7 @@ No composite actions, no repo-level PR template (org-level `netresearch/.github`
 - `uses:` jobs get exactly the reusable's caller contract in their `permissions:` block; top-level `permissions: {}` (checks.yml) or `contents: read` (ci.yml)
 - Pin third-party actions to a full commit SHA with a version comment (see harden-runner in the gate job)
 - PR-only jobs (`dependency-review`, `pr-quality`) and app-posted checks (CodeQL etc.) are **not requirable** in rulesets — require `All security checks` and `ci / All CI checks` instead (merge-queue safe)
-- Extension-specific changes belong in `ci.yml` only; `checks.yml` edits must land in all t3x repos or none
+- Extension-specific changes belong in `ci.yml` and `release.yml` only; `checks.yml` edits must land in all t3x repos or none
 <!-- AGENTS-GENERATED:END code-style -->
 
 <!-- AGENTS-GENERATED:START patterns -->
@@ -70,7 +70,7 @@ Before adding an input, read the reusable's `workflow_call.inputs` in `netresear
 ## Security & safety
 - **Minimal permissions**: start from `permissions: {}` and grant per job exactly what the reusable's contract requires
 - **Pin actions** to full commit SHA, never mutable tags
-- Never use `secrets: inherit`; this repo's workflows pass no secrets
+- Never use `secrets: inherit`; pass secrets explicitly (`TYPO3_TER_ACCESS_TOKEN` in `release.yml` and `ter-publish.yml`, `PROJECT_APP_ID` and `PROJECT_APP_PRIVATE_KEY` in `auto-merge-deps.yml`)
 - Do not weaken or remove gate jobs to make a PR green — fix the failing job
 <!-- AGENTS-GENERATED:END security -->
 
