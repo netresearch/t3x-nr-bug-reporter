@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-31
+
+### Fixed
+
+- The `composer.json` description reads `<title> - <description>` with the
+  title and description of `ext_emconf.php`. This removes the "Composer
+  Manifest" warning in the TYPO3 14.3 Reports module and gives TER and
+  Packagist the same extension name. Both descriptions are shorter.
+
 ## [0.1.1] - 2026-10-07
 
 ### Added
@@ -51,6 +60,7 @@ or end-to-end tests yet.
   the exception handler class before `ext_localconf.php` runs; the README
   shows the setting.
 
-[Unreleased]: https://github.com/netresearch/t3x-nr-bug-reporter/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/netresearch/t3x-nr-bug-reporter/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/netresearch/t3x-nr-bug-reporter/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/netresearch/t3x-nr-bug-reporter/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/netresearch/t3x-nr-bug-reporter/releases/tag/v0.1.0
