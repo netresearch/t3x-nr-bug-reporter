@@ -23,7 +23,7 @@ Thin callers of the shared netresearch reusable workflows. All real CI logic (ch
 <!-- AGENTS-GENERATED:END filemap -->
 
 ## Workflow files
-- 9 workflows, all `uses:`-only thin callers — no inline `run:` steps except the gate job inside `checks.yml`
+- 9 workflows, all `uses:`-only thin callers — no inline `run:` steps except the gate job and the `supersede` job inside `checks.yml` (`supersede` cancels the Checks runs of earlier head commits of a pull request and is intentionally not in `gate.needs`)
 
 <!-- AGENTS-GENERATED:START structure -->
 ## Directory structure
