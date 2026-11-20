@@ -13,7 +13,7 @@ Thin callers of the shared netresearch reusable workflows. All real CI logic (ch
 ## Key Files
 | File | Purpose |
 |------|---------|
-| `ci.yml` | Calls `typo3-ci-workflows/ci.yml@main`: PHP `8.2–8.5` × TYPO3 `^13.4`/`^14.3`; `run-cgl`/`run-phpstan`/`run-rector` disabled (no such setup in this repo); unit tests via `vendor/bin/phpunit` |
+| `ci.yml` | Calls `typo3-ci-workflows/ci.yml@main`: PHP `8.2–8.6` × TYPO3 `^13.4`/`^14.3`; `run-cgl`/`run-phpstan`/`run-rector` disabled (no such setup in this repo); unit tests via `vendor/bin/phpunit` |
 | `checks.yml` | Security/quality jobs (security, betterleaks, zizmor, fuzz, license-check, codeql, scorecard, dependency-review, pr-quality) + the `All security checks` gate. **Byte-identical and drift-enforced across every t3x repo** — only `ci.yml` and `release.yml` carry extension-specific settings |
 | `harness-verify.yml` | Agent-harness consistency check (`scripts/verify-harness.sh`) via the shared `script-check` reusable |
 | `release.yml` | On a pushed `v*` tag, calls `typo3-ci-workflows/release-typo3-extension.yml@main` (extension-specific inputs live HERE) |
@@ -60,7 +60,7 @@ jobs:
     permissions:
       contents: read
     with:
-      php-versions: '["8.2","8.3","8.4","8.5"]'
+      php-versions: '["8.2","8.3","8.4","8.5","8.6"]'
       typo3-versions: '["^13.4","^14.3"]'
 ```
 Before adding an input, read the reusable's `workflow_call.inputs` in `netresearch/typo3-ci-workflows` — do not guess input names.

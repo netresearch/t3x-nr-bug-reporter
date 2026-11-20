@@ -56,7 +56,7 @@ composer require netresearch/nr-bug-reporter
   showed), it renders the core production error page instead of the debug page; switch that
   setting to `ReportingProductionExceptionHandler`.
 
-Targets **TYPO3 13.4 LTS + 14.3 LTS**, **PHP 8.2–8.5**, Composer-mode installs.
+Targets **TYPO3 13.4 LTS + 14.3 LTS**, **PHP 8.2–8.6**, Composer-mode installs.
 
 ## How attribution works
 
@@ -124,7 +124,7 @@ Configuration/   Services.yaml, JavaScriptModules.php, RequestMiddlewares.php, I
 Resources/       Public/JavaScript/report-toolbar.js, Public/Icons/Extension.svg
 Tests/Unit/      attribution + ReportPolicy + GitHubTrackerResolver tests (portable, no TYPO3 boot)
 bin/, fixtures/  CLI dev/regression harness (local; needs a sibling TYPO3 core checkout)
-.github/         CI: PHP lint + PHPUnit on PHP 8.2-8.5 × TYPO3 13.4/14.3, plus security checks
+.github/         CI: PHP lint + PHPUnit on PHP 8.2-8.6 × TYPO3 13.4/14.3, plus security checks
 ```
 
 ## Verification
@@ -139,7 +139,7 @@ Verified **live in booted DDEV instances — TYPO3 14.3.2 / PHP 8.5 (primary) an
 - ✅ The **error-page banner is injected** into the debug exception page through the handler, correctly
   gated (a core-only error shows "no one-click report", not a wrong report).
 - ✅ Unit tests pass for the safety-critical pure classes (attribution, `ReportPolicy` gating,
-  `GitHubTrackerResolver` 4-tier chain); CI workflow runs PHP lint + PHPUnit on PHP 8.2–8.5.
+  `GitHubTrackerResolver` 4-tier chain); CI workflow runs PHP lint + PHPUnit on PHP 8.2–8.6.
 - ✅ Every referenced TYPO3 FQCN/signature was verified against TYPO3 13.4/14.3 core source; the
   toolbar renders on both v13 (Bootstrap dropdown) and v14 (native popover API).
 
@@ -179,7 +179,7 @@ Checks that run on every pull request in this repository:
   declares `SSPL`, `BSL` or `BUSL`, or an `SSPL-` or `BUSL-` identifier of any version, such as `SSPL-1.0` or `BUSL-1.1`; `BSL-1.0` passes); CodeQL for the workflow files and `Resources/Public/JavaScript/` (it has no PHP
   analyser); Betterleaks secret scanning; zizmor for the workflow files. The `fuzz` job is called but runs
   nothing here, as the repository has no fuzz or mutation tests.
-- `.github/workflows/ci.yml`: PHP lint of every PHP file and the unit tests, for PHP 8.2 to 8.5 and
+- `.github/workflows/ci.yml`: PHP lint of every PHP file and the unit tests, for PHP 8.2 to 8.6 and
   TYPO3 13.4 and 14.3. Code style, PHPStan, Rector and functional tests are switched off, as the repository
   has no configuration for them.
 - `.github/workflows/harness-verify.yml`: `scripts/verify-harness.sh` checks that `AGENTS.md` and `docs/`

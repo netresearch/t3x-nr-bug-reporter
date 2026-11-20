@@ -52,7 +52,7 @@ There is no `Tests/Functional/` and no `Tests/Build/` — do not invent them; ne
 | Single class | `vendor/bin/phpunit --filter ReportPolicyTest` |
 | Single file | `vendor/bin/phpunit Tests/Unit/Decision/ReportPolicyTest.php` |
 
-CI runs exactly `vendor/bin/phpunit` on PHP 8.2–8.5 × TYPO3 ^13.4/^14.3 (see `.github/workflows/ci.yml`). There are no composer test scripts and no test-runner wrapper script.
+CI runs exactly `vendor/bin/phpunit` on PHP 8.2–8.6 × TYPO3 ^13.4/^14.3 (see `.github/workflows/ci.yml`). There are no composer test scripts and no test-runner wrapper script.
 <!-- AGENTS-GENERATED:END commands -->
 
 <!-- AGENTS-GENERATED:START patterns -->
